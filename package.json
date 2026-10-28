@@ -4,9 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node ./scripts/prepare-resume.mjs && NG_CLI_ANALYTICS=false ng serve --host 0.0.0.0 --port 4200",
-    "build": "node ./scripts/prepare-resume.mjs && ng build --configuration production",
-    "typecheck": "node ./scripts/prepare-resume.mjs && NG_CLI_ANALYTICS=false ng build --configuration development"
+    "dev": "node ./scripts/prepare-resume.mjs && ng serve --host 0.0.0.0 --port 4200",
+    "typecheck": "node ./scripts/prepare-resume.mjs && ng build --configuration development",
+    "build": "node ./scripts/prepare-resume.mjs && ng build --configuration production"
+    
   },
   "dependencies": {
     "@angular/animations": "^22.2.3",
