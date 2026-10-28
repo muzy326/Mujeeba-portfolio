@@ -25,7 +25,11 @@ import { SkillGroupComponent } from './skill-group.component';
   ],
   template: `
     @if (showStudio) {
-  <app-studio-3d (close)="closeStudio()" />
+  @defer (when showStudio) {
+    <app-studio-3d (close)="closeStudio()" />
+  } @loading {
+    <p style="padding:2rem;color:#80d9ff">Loading 3D studio…</p>
+  }
 } @else {
     <a class="skip-link" href="#main-content">Skip to content</a>
     <header class="site-header">
