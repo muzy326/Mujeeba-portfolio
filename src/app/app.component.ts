@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Studio3DComponent } from './studio-3d.component';
 import {
   EDUCATION,
   EXPERIENCE,
@@ -20,8 +21,12 @@ import { SkillGroupComponent } from './skill-group.component';
     ReactiveFormsModule,
     ProjectCardComponent,
     SkillGroupComponent,
+    Studio3DComponent,
   ],
   template: `
+    @if (showStudio) {
+  <app-studio-3d (close)="closeStudio()" />
+} @else {
     <a class="skip-link" href="#main-content">Skip to content</a>
     <header class="site-header">
       <div class="page-shell header-inner">
@@ -120,6 +125,13 @@ import { SkillGroupComponent } from './skill-group.component';
                 (click)="announceResumeMissing()"
               >Download Resume</button>
               <a class="button button-secondary" href="#contact">Contact Me</a>
+              <button
+  class="button button-secondary"
+  type="button"
+  (click)="openStudio()"
+>
+  Explore 3D Studio ↗
+</button>
             </div>
             <p class="resume-inline" *ngIf="resumeNotice" id="resume-note" role="status">
               Resume PDF not added yet. Place your actual file at <code>public/resume.pdf</code> to enable download.
@@ -287,6 +299,7 @@ import { SkillGroupComponent } from './skill-group.component';
       </div>
       <div class="page-shell footer-copy">© {{ currentYear }} Mohammed Mujeeba. All rights reserved.</div>
     </footer>
+    }
   `,
 })
 export class AppComponent implements OnInit {
@@ -300,6 +313,7 @@ export class AppComponent implements OnInit {
   readonly contactForm;
   isLightTheme = false;
   menuOpen = false;
+  showStudio = false;
   resumeNotice = false;
   formStatus = '';
 
@@ -329,6 +343,16 @@ export class AppComponent implements OnInit {
 
   closeMenu(): void {
     this.menuOpen = false;
+  }
+    openStudio(): void {
+    this.showStudio = true;
+    this.closeMenu();
+    window.scrollTo(0, 0);
+  }
+
+  closeStudio(): void {
+    this.showStudio = false;
+    window.scrollTo(0, 0);
   }
 
   announceResumeMissing(): void {
