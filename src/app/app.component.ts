@@ -9,9 +9,17 @@ import {
   PROJECTS,
   SKILL_GROUPS,
 } from './portfolio-data';
-import { ProjectCardComponent } from './project-card.component';
+import { ProjectSliderComponent } from './project-slider.component';
 import { RESUME_AVAILABLE } from './resume-status.generated';
 import { SkillGroupComponent } from './skill-group.component';
+
+/**
+ * Contact form delivery (free, no backend):
+ * 1. Go to https://web3forms.com, enter mdmujeeba66@gmail.com and get an access key.
+ * 2. Paste the key below. Messages then arrive straight in your inbox.
+ * While the key is empty, the form falls back to opening the visitor's email app.
+ */
+const WEB3FORMS_ACCESS_KEY = '';
 
 @Component({
   selector: 'app-root',
@@ -19,18 +27,18 @@ import { SkillGroupComponent } from './skill-group.component';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    ProjectCardComponent,
+    ProjectSliderComponent,
     SkillGroupComponent,
     Studio3DComponent,
   ],
   template: `
     @if (showStudio) {
-  @defer (when showStudio) {
-    <app-studio-3d (close)="closeStudio()" />
-  } @loading {
-    <p style="padding:2rem;color:#80d9ff">Loading 3D studio…</p>
-  }
-} @else {
+      @defer (when showStudio) {
+        <app-studio-3d (close)="closeStudio()" />
+      } @loading {
+        <p style="padding:2rem;color:#80d9ff">Loading 3D studio…</p>
+      }
+    } @else {
     <a class="skip-link" href="#main-content">Skip to content</a>
     <header class="site-header">
       <div class="page-shell header-inner">
@@ -38,7 +46,7 @@ import { SkillGroupComponent } from './skill-group.component';
           <span class="brand-mark" aria-hidden="true">MM</span>
           <span>
             <span class="brand-name">Mohammed Mujeeba</span>
-            <span class="brand-role">FRONT-END DEVELOPER</span>
+            <span class="brand-role">FRONT-END · FULL-STACK DEVELOPER</span>
           </span>
         </a>
 
@@ -109,9 +117,21 @@ import { SkillGroupComponent } from './skill-group.component';
       <section class="hero page-shell" id="home" aria-labelledby="hero-title">
         <div class="hero-grid">
           <div>
-            <div class="availability">Open to front-end opportunities</div>
-            <p class="eyebrow">Riyadh, Saudi Arabia · Remote</p>
+            <div class="availability">Open to on-site, hybrid &amp; remote roles</div>
+            <p class="eyebrow">Based in Riyadh, Saudi Arabia</p>
             <h1 id="hero-title">Hi, I'm <span>Mohammed Mujeeba</span></h1>
+
+            <p class="sr-only">Front-End Developer and Full-Stack Developer</p>
+            <div class="role-marquee" aria-hidden="true">
+              <div class="marquee-track">
+                @for (copy of copies; track copy) {
+                  @for (role of roles; track role; let i = $index) {
+                    <span [class.role-main]="i < 2">{{ role }}</span>
+                  }
+                }
+              </div>
+            </div>
+
             <p class="hero-lede">Front-End Developer building responsive, user-friendly web applications.</p>
             <p class="hero-copy">I build practical web applications using Angular, React, TypeScript, and modern full-stack technologies.</p>
             <div class="hero-actions">
@@ -130,12 +150,12 @@ import { SkillGroupComponent } from './skill-group.component';
               >Download Resume</button>
               <a class="button button-secondary" href="#contact">Contact Me</a>
               <button
-  class="button button-secondary"
-  type="button"
-  (click)="openStudio()"
->
-  Explore 3D Studio ↗
-</button>
+                class="button button-secondary"
+                type="button"
+                (click)="openStudio()"
+              >
+                Explore 3D Studio ↗
+              </button>
             </div>
             <p class="resume-inline" *ngIf="resumeNotice" id="resume-note" role="status">
               Resume PDF not added yet. Place your actual file at <code>public/resume.pdf</code> to enable download.
@@ -159,7 +179,7 @@ import { SkillGroupComponent } from './skill-group.component';
             <div class="aside-stack">
               <div class="stack-item"><span class="stack-symbol" aria-hidden="true">01</span><span><strong>Frontend</strong><span>Angular · React · TypeScript</span></span></div>
               <div class="stack-item"><span class="stack-symbol" aria-hidden="true">02</span><span><strong>Application data</strong><span>REST APIs · PostgreSQL · Firebase</span></span></div>
-              <div class="stack-item"><span class="stack-symbol" aria-hidden="true">03</span><span><strong>Build & deploy</strong><span>Git · Docker · Vercel · AWS EC2</span></span></div>
+              <div class="stack-item"><span class="stack-symbol" aria-hidden="true">03</span><span><strong>Build &amp; deploy</strong><span>Git · Docker · Vercel · AWS EC2</span></span></div>
             </div>
             <div class="aside-bottom"><span>FRONT-END / FULL-STACK PROJECTS</span><span>01—03</span></div>
           </aside>
@@ -177,7 +197,7 @@ import { SkillGroupComponent } from './skill-group.component';
           <div class="about-copy">
             <p>{{ profile.summary }}</p>
             <p>I focus on responsive UI development, reusable components, and API integration, with an interest in building maintainable applications. I also understand backend APIs, databases, deployment, and AI integration.</p>
-            <p>I am interested in front-end and web application development opportunities in Riyadh and remote teams.</p>
+            <p>I am based in Riyadh and open to on-site, hybrid, and remote front-end and web application development roles.</p>
             <div class="about-notes">
               <div class="note-card"><strong>Frontend first</strong><span>Responsive UI, reusable components, and practical interaction design.</span></div>
               <div class="note-card"><strong>Comfortable across the stack</strong><span>APIs, databases, deployment, and AI-assisted workflows.</span></div>
@@ -206,13 +226,7 @@ import { SkillGroupComponent } from './skill-group.component';
             <h2 id="projects-title">Applications built to be used.</h2>
             <p>Full-stack projects spanning responsive interfaces, API and data integration, authentication, and deployment.</p>
           </div>
-          <div class="projects-grid">
-            <app-project-card
-              *ngFor="let project of projects; let index = index"
-              [project]="project"
-              [projectNumber]="index + 1"
-            ></app-project-card>
-          </div>
+          <app-project-slider [projects]="projects"></app-project-slider>
         </div>
       </section>
 
@@ -251,7 +265,7 @@ import { SkillGroupComponent } from './skill-group.component';
           <div class="contact-copy">
             <p class="eyebrow">06 / Contact</p>
             <h2 id="contact-title">Let's Build Something Useful</h2>
-            <p>I'm open to opportunities in front-end development, Angular, React, and web application development.</p>
+            <p>I'm open to on-site, hybrid, and remote opportunities in front-end development, Angular, React, and web application development.</p>
             <div class="contact-links">
               <a class="button button-primary" [href]="'mailto:' + profile.email">Email Mohammed</a>
               <a class="contact-link" [href]="profile.github" target="_blank" rel="noopener noreferrer">
@@ -265,8 +279,8 @@ import { SkillGroupComponent } from './skill-group.component';
             </div>
           </div>
           <form class="contact-form" [formGroup]="contactForm" (ngSubmit)="submitContact()" novalidate>
-            <h3>Write a message</h3>
-            <p class="form-explainer">Your email app will open with a draft addressed to {{ profile.email }}. Nothing is sent from this site.</p>
+            <h3>Send me a message</h3>
+            <p class="form-explainer">Tell me a little about the role or project and I'll reply to you by email.</p>
             <div class="field">
               <label for="contact-name">Name</label>
               <input id="contact-name" type="text" formControlName="name" autocomplete="name" placeholder="Your name"
@@ -285,8 +299,14 @@ import { SkillGroupComponent } from './skill-group.component';
                 [attr.aria-invalid]="hasError('message')"></textarea>
               <span class="field-error" *ngIf="hasError('message')">Please add a message (at least 10 characters).</span>
             </div>
-            <button class="button button-primary" type="submit">Open email draft <span aria-hidden="true">↗</span></button>
-            <p class="form-status" *ngIf="formStatus" role="status">{{ formStatus }}</p>
+            <div class="hp" aria-hidden="true">
+              <label for="contact-website">Leave this field empty</label>
+              <input id="contact-website" type="text" formControlName="website" tabindex="-1" autocomplete="off">
+            </div>
+            <button class="button button-primary" type="submit" [disabled]="sending">
+              {{ sending ? 'Sending…' : 'Send message' }} <span aria-hidden="true" *ngIf="!sending">↗</span>
+            </button>
+            <p class="form-status" *ngIf="formStatus" [class.success]="formState === 'sent'" [class.error]="formState === 'error'" role="status">{{ formStatus }}</p>
           </form>
         </div>
       </section>
@@ -314,11 +334,15 @@ export class AppComponent implements OnInit {
   readonly education = EDUCATION;
   readonly currentYear = new Date().getFullYear();
   readonly resumeAvailable = RESUME_AVAILABLE;
+  readonly roles = ['Front-End Developer', 'Full-Stack Developer', 'Angular', 'React', 'TypeScript', 'Node.js'];
+  readonly copies = [1, 2];
   readonly contactForm;
   isLightTheme = false;
   menuOpen = false;
   showStudio = false;
   resumeNotice = false;
+  sending = false;
+  formState: 'idle' | 'sent' | 'error' = 'idle';
   formStatus = '';
 
   constructor(formBuilder: FormBuilder) {
@@ -326,6 +350,7 @@ export class AppComponent implements OnInit {
       name: ['', [Validators.required, Validators.maxLength(120)]],
       email: ['', [Validators.required, Validators.email, Validators.maxLength(254)]],
       message: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(5000)]],
+      website: [''], // honeypot: real visitors never see or fill this
     });
   }
 
@@ -348,7 +373,8 @@ export class AppComponent implements OnInit {
   closeMenu(): void {
     this.menuOpen = false;
   }
-    openStudio(): void {
+
+  openStudio(): void {
     this.showStudio = true;
     this.closeMenu();
     window.scrollTo(0, 0);
@@ -369,19 +395,59 @@ export class AppComponent implements OnInit {
     return control.invalid && (control.dirty || control.touched);
   }
 
-  submitContact(): void {
+  async submitContact(): Promise<void> {
     this.formStatus = '';
+    this.formState = 'idle';
     if (this.contactForm.invalid) {
       this.contactForm.markAllAsTouched();
-      this.formStatus = 'Please review the highlighted fields before continuing.';
+      this.formState = 'error';
+      this.formStatus = 'Please review the highlighted fields before sending.';
       return;
     }
 
-    const { name, email, message } = this.contactForm.getRawValue();
+    const { name, email, message, website } = this.contactForm.getRawValue();
+    if (website) {
+      // A bot filled the hidden field: pretend success and do nothing.
+      this.formState = 'sent';
+      this.formStatus = 'Thank you! Your message has been sent.';
+      return;
+    }
+
     const subject = `Portfolio enquiry from ${name}`;
-    const body = `Name: ${name}\nEmail: ${email}\n\n${message}`;
-    window.location.href = `mailto:${this.profile.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    this.formStatus = 'Your email application should open with a draft. This portfolio does not send messages directly.';
+
+    // No delivery key configured yet: fall back to the visitor's email app.
+    if (!WEB3FORMS_ACCESS_KEY) {
+      const body = `Name: ${name}\nEmail: ${email}\n\n${message}`;
+      window.location.href = `mailto:${this.profile.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      this.formStatus = 'Your email app should open with a draft message.';
+      return;
+    }
+
+    this.sending = true;
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_ACCESS_KEY,
+          subject,
+          from_name: 'Portfolio website',
+          name,
+          email,
+          message,
+        }),
+      });
+      const result = (await response.json()) as { success?: boolean };
+      if (!response.ok || !result.success) throw new Error('Send failed');
+      this.formState = 'sent';
+      this.formStatus = 'Thank you! Your message has been sent. I will reply to you by email.';
+      this.contactForm.reset();
+    } catch {
+      this.formState = 'error';
+      this.formStatus = `Sorry, the message could not be sent. Please email ${this.profile.email} directly.`;
+    } finally {
+      this.sending = false;
+    }
   }
 
   @HostListener('document:keydown.escape')
